@@ -1,0 +1,32 @@
+{
+  "name": "@bluemath/optimize",
+  "version": "0.0.1",
+  "description": "Root finding and optimization routines",
+  "main": "lib/index.js",
+  "scripts": {
+    "build-test": "webpack --config webpack.test.config.js",
+    "watch-test": "webpack --watch --config webpack.test.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluemathsoft/bm-optimize.git"
+  },
+  "keywords": [
+    "Optimization",
+    "Root",
+    "finding"
+  ],
+  "author": "Jayesh Salvi",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/bluemathsoft/bm-optimize/issues"
+  },
+  "homepage": "https://github.com/bluemathsoft/bm-optimize#readme",
+  "devDependencies": {
+    "@types/qunit": "^2.0.31",
+    "awesome-typescript-loader": "^3.2.3",
+    "source-map-loader": "^0.2.3",
+    "typescript": "^2.5.3",
+    "webpack": "^3.8.1"
+  }
+}
