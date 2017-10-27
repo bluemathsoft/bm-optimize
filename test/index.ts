@@ -18,7 +18,7 @@ limitations under the License.
 
 /// <reference types="qunit"/>
 
-import {secant,newtonraphson} from '../src'
+import {secant,newtonraphson,bisect} from '../src'
 import {isequal} from '@bluemath/common'
 
 function func_A(x:number) {
@@ -47,6 +47,18 @@ function fprime2_B(x:number) {
 
 function testRoots() {
   QUnit.module('Roots',() => {
+
+    QUnit.test('bisect', (assert:Assert) => {
+      assert.ok(isequal(bisect(func_A,0.5,1.5), 1));
+      assert.ok(isequal(bisect(func_A,-0.5,-2), -1));
+      assert.ok(isequal(bisect(func_A,0,2), 1));
+      assert.ok(isequal(bisect(func_A,0,-2), -1));
+
+      let negroot2 = (1-Math.sqrt(13))/2;
+      let posroot2 = (1+Math.sqrt(13))/2;
+      assert.ok(isequal(bisect(func_B,0,-5), negroot2));
+      assert.ok(isequal(bisect(func_B,1,5), posroot2));
+    });
 
     QUnit.test('secant', (assert:Assert) => {
       assert.ok(isequal(secant(func_A,0.5), 1));

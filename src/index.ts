@@ -110,6 +110,38 @@ export function newtonraphson(
   throw new Error(`Failed to converge after ${maxiter} iterations`)
 }
 
-export function bisect() {
-
+export function bisect(
+  func : (x:number)=>number,
+  xa : number,
+  xb : number,
+  xtolerance = EPSILON,
+  maxiter = 50,
+  args = []
+):number
+{
+  let fa = func(xa,...args);
+  let fb = func(xb,...args);
+  let fm,xm;
+  if(fa*fb > 0) {
+    throw new Error('Root is not bracketed in given interval');
+  }
+  if(fa === 0) {
+    return xa;
+  }
+  if(fb === 0) {
+    return xb;
+  }
+  let dm = xb-xa;
+  for(let i=0; i<maxiter; i++) {
+    dm *= 0.5;
+    xm = xa + dm;
+    fm = func(xm, ...args);
+    if(fm*fa >= 0) {
+      xa = xm;
+    }
+    if(fm === 0 || Math.abs(dm) < xtolerance) {
+      return xm;
+    }
+  }
+  return xa;
 }
