@@ -18,34 +18,85 @@ limitations under the License.
 
 /// <reference types="qunit"/>
 
-import {secant} from '../src'
+import {secant,newtonraphson} from '../src'
 import {isequal} from '@bluemath/common'
 
-function func_1(x:number) {
+function func_A(x:number) {
   return x*x-1;
 }
 
-function func_2(x:number) {
+function fprime_A(x:number) {
+  return 2*x;
+}
+
+function fprime2_A(x:number) {
+  return 2;
+}
+
+function func_B(x:number) {
   return x*x-x-3;
+}
+
+function fprime_B(x:number) {
+  return 2*x-1;
+}
+
+function fprime2_B(x:number) {
+  return 2;
 }
 
 function testRoots() {
   QUnit.module('Roots',() => {
 
     QUnit.test('secant', (assert:Assert) => {
-      assert.ok(isequal(secant(func_1,0.5), 1));
-      assert.ok(isequal(secant(func_1,-0.5), -1));
-      assert.ok(isequal(secant(func_1,0.01), 1));
-      assert.ok(isequal(secant(func_1,-0.01), -1));
-      assert.ok(isequal(secant(func_1,1000), 1));
-      assert.ok(isequal(secant(func_1,-1000), -1));
+      assert.ok(isequal(secant(func_A,0.5), 1));
+      assert.ok(isequal(secant(func_A,-0.5), -1));
+      assert.ok(isequal(secant(func_A,0.01), 1));
+      assert.ok(isequal(secant(func_A,-0.01), -1));
+      assert.ok(isequal(secant(func_A,1000), 1));
+      assert.ok(isequal(secant(func_A,-1000), -1));
 
-      assert.ok(isequal(secant(func_1,0), 1)); // due to hardcoded behavior of the algorithm
+      assert.ok(isequal(secant(func_A,0), 1)); // due to hardcoded behavior of the algorithm
 
       let negroot2 = (1-Math.sqrt(13))/2;
       let posroot2 = (1+Math.sqrt(13))/2;
-      assert.ok(isequal(secant(func_2, -1), negroot2));
-      assert.ok(isequal(secant(func_2, 1), posroot2));
+      assert.ok(isequal(secant(func_B, -1), negroot2));
+      assert.ok(isequal(secant(func_B, 1), posroot2));
+    });
+
+    QUnit.module('newtonraphson', () => {
+
+      QUnit.test('with 1st derivative',(assert:Assert) => {
+        assert.ok(isequal(newtonraphson(func_A,0.5,fprime_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-0.5,fprime_A), -1));
+        assert.ok(isequal(newtonraphson(func_A,0.01,fprime_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-0.01,fprime_A), -1));
+        assert.ok(isequal(newtonraphson(func_A,1000,fprime_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-1000,fprime_A), -1));
+
+        assert.throws(() => {newtonraphson(func_A,0,fprime_A), -1});
+
+        let negroot2 = (1-Math.sqrt(13))/2;
+        let posroot2 = (1+Math.sqrt(13))/2;
+        assert.ok(isequal(newtonraphson(func_B, -1,fprime_B), negroot2));
+        assert.ok(isequal(newtonraphson(func_B, 1,fprime_B), posroot2));
+      });
+
+      QUnit.test('with 1st & 2nd derivatives',(assert:Assert) => {
+        assert.ok(isequal(newtonraphson(func_A,0.5,fprime_A,fprime2_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-0.5,fprime_A,fprime2_A), -1));
+        assert.ok(isequal(newtonraphson(func_A,0.01,fprime_A,fprime2_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-0.01,fprime_A,fprime2_A), -1));
+        assert.ok(isequal(newtonraphson(func_A,1000,fprime_A,fprime2_A), 1));
+        assert.ok(isequal(newtonraphson(func_A,-1000,fprime_A,fprime2_A), -1));
+
+        assert.throws(() => {newtonraphson(func_A,0,fprime_A,fprime2_A), -1});
+
+        let negroot2 = (1-Math.sqrt(13))/2;
+        let posroot2 = (1+Math.sqrt(13))/2;
+        assert.ok(isequal(newtonraphson(func_B, -1,fprime_B,fprime2_B), negroot2));
+        assert.ok(isequal(newtonraphson(func_B, 1,fprime_B,fprime2_B), posroot2));
+      });
     });
 
   });

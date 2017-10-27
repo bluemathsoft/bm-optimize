@@ -16,7 +16,7 @@ limitations under the License.
 
 */
 
-import {EPSILON} from '@bluemath/common'
+import {EPSILON,iszero} from '@bluemath/common'
 
 export function secant(
   func : (x:number)=>number,
@@ -62,8 +62,52 @@ export function secant(
   throw new Error(`Failed to converge after ${maxiter} iterations`)
 }
 
-export function newtonraphson() {
+export function newtonraphson(
+  func : (x:number)=>number,
+  x0 : number,
+  fprime : (x:number)=>number,
+  fprime2? : (x:number)=>number,
+  tolerance = EPSILON,
+  maxiter = 50,
+  args = []
+) : number
+{
+  if(tolerance <= 0) {
+    throw new Error('Too small tolerance');
+  }
+  if(maxiter <= 0) {
+    throw new Error('Insufficient maxiter');
+  }
 
+  let fder = 0;
+  let fder2 = 0;
+  let x;
+  for(let i=0; i<maxiter; i++) {
+    fder = fprime(x0, ...args);
+    if(fder === 0) {
+      throw new Error('Derivative is zero');
+    }
+    let fval = func(x0, ...args);
+    if(fprime2) {
+      fder2 = fprime2(x0, ...args);
+    }
+    if(fder2 === 0) {
+      x = x0 - fval/fder;
+    } else {
+      // Parabolic Halley's method
+      let discr = (fder*fder) - 2*fval*fder2;
+      if(discr < 0) {
+        x = x0 - fder/fder2;
+      } else {
+        x = x0 - 2*fval/(fder+(fder/Math.abs(fder))*Math.sqrt(discr));
+      }
+    }
+    if(Math.abs(x-x0) < tolerance) {
+      return x;
+    }
+    x0 = x;
+  }
+  throw new Error(`Failed to converge after ${maxiter} iterations`)
 }
 
 export function bisect() {
