@@ -28,5 +28,8 @@
     "source-map-loader": "^0.2.3",
     "typescript": "^2.5.3",
     "webpack": "^3.8.1"
+  },
+  "dependencies": {
+    "@bluemath/common": "^0.2.2"
   }
 }

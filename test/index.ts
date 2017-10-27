@@ -18,11 +18,34 @@ limitations under the License.
 
 /// <reference types="qunit"/>
 
+import {secant} from '../src'
+import {isequal} from '@bluemath/common'
+
+function func_1(x:number) {
+  return x*x-1;
+}
+
+function func_2(x:number) {
+  return x*x-x-3;
+}
+
 function testRoots() {
   QUnit.module('Roots',() => {
 
     QUnit.test('secant', (assert:Assert) => {
-      assert.ok(true);
+      assert.ok(isequal(secant(func_1,0.5), 1));
+      assert.ok(isequal(secant(func_1,-0.5), -1));
+      assert.ok(isequal(secant(func_1,0.01), 1));
+      assert.ok(isequal(secant(func_1,-0.01), -1));
+      assert.ok(isequal(secant(func_1,1000), 1));
+      assert.ok(isequal(secant(func_1,-1000), -1));
+
+      assert.ok(isequal(secant(func_1,0), 1)); // due to hardcoded behavior of the algorithm
+
+      let negroot2 = (1-Math.sqrt(13))/2;
+      let posroot2 = (1+Math.sqrt(13))/2;
+      assert.ok(isequal(secant(func_2, -1), negroot2));
+      assert.ok(isequal(secant(func_2, 1), posroot2));
     });
 
   });
